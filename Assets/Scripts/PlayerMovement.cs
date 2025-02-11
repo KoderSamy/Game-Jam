@@ -33,8 +33,8 @@ public class PlayerMovement : MonoBehaviour
     private GameObject swordInstance; // Экземпляр меча
     private Level1 levelSettings;
     private InputAction sliceAction; // Новое действие для меча
-    private bool isSwordActive = false; // Меч активен?
     public float swordActiveTime = 2f;  // Время жизни меча
+    private float swordTimer = 0f;  // Таймер для меча
 
     void Awake()
     {
@@ -56,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
         shieldAction.canceled += Shield;
         sliceAction.Enable();
         sliceAction.performed += OnFire;
-        sliceAction.canceled += OnFireCancel;
+        sliceAction.canceled += OnFire;
     }
 
     void OnDisable()
@@ -69,10 +69,9 @@ public class PlayerMovement : MonoBehaviour
         shieldAction.canceled -= Shield;
         sliceAction.Disable();
         sliceAction.performed -= OnFire;
-        sliceAction.canceled -= OnFireCancel;
-       
+        sliceAction.canceled -= OnFire;
         DestroyShield();
-        DestroySword(); //Уничтожаем мечь
+        DestroySword();
     }
 
     void Update()
@@ -87,14 +86,18 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    //============================================================================
+    //================================== SHIELD ==================================
+    //============================================================================
+
     private void Shield(InputAction.CallbackContext context)
     {
-        if (context.performed && !isSwordActive) //  Нажата правая кнопка мыши и меч не активен
+        if (context.performed && swordInstance == null) //И чтобы не было меча
         {
             CreateShield();
-            shieldTimer = 0f; // Сбрасываем таймер щита
+            shieldTimer = 0f;
         }
-        else if (context.canceled) // Отпущена правая кнопка мыши
+         else if (context.canceled)
         {
             DestroyShield();
         }
@@ -102,10 +105,12 @@ public class PlayerMovement : MonoBehaviour
 
     void CreateShield()
     {
-        if (shieldInstance == null)
+        if (shieldInstance == null && levelSettings != null && this.levelSettings.enabled)
         {
+            swordTimer = 0;
+            DestroySword();
             shieldInstance = Instantiate(shieldPrefab, transform.position + transform.forward * shieldDistance, transform.rotation);
-            shieldInstance.transform.parent = transform; // Щит - дочерний объект персонажа
+            shieldInstance.transform.parent = transform;
         }
     }
 
@@ -118,27 +123,31 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    //============================================================================
+    //================================== SWORD ===================================
+    //============================================================================
+
     void OnFire(InputAction.CallbackContext context)
     {
-        if (context.performed && levelSettings != null && levelSettings.canSlice && shieldInstance == null && !isSwordActive)
+        if (context.performed && levelSettings != null && levelSettings.canSlice && shieldInstance == null)
         {
             CreateSword();
-            StartCoroutine(DeactivateSwordAfterDelay(swordActiveTime));
+            swordTimer = 0f; //Обнуляем
         }
-    }
-    
-    private IEnumerator DeactivateSwordAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        DestroySword(); //Удаляем меч после задержки
+        else if (context.canceled)
+        {
+            DestroySword();
+        }
     }
 
     private void CreateSword()
     {
         if (swordPrefab != null && swordInstance == null)
         {
+            shieldTimer = 0;
+            DestroyShield();
             swordInstance = Instantiate(swordPrefab, transform.position + transform.forward * 0.5f, transform.rotation);
-             
+            swordInstance.SetActive(true);  //  Добавляем эту строку, чтобы активировать меч!
         }
     }
 
@@ -148,24 +157,14 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy(swordInstance);
             swordInstance = null;
-              isSwordActive = false; //И выключаем флаг
+            
         }
     }
+
+    //============================================================================
+    //================================== OTHER ===================================
+    //============================================================================
     
-    void OnFireCancel(InputAction.CallbackContext context)
-    {
-       DestroySword();
-    }
-
-     void DisableSword()
-    {
-        if (swordInstance != null)
-        {
-            Destroy(swordInstance);
-            swordInstance = null;
-        }
-    }
-
     void Start()
     {
         targetPosition = transform.position;
@@ -229,7 +228,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-
         if (collision.gameObject.CompareTag("Bullet"))
         {
             if (shieldInstance == null) // Умираем от пули, только если щита нет
@@ -238,7 +236,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (collision.gameObject.CompareTag("Obstacle"))
+         if (collision.gameObject.CompareTag("Obstacle"))
         {
             Die();
         }
@@ -246,7 +244,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Die()  //  Новый метод для перезапуска сцены
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void OnTriggerEnter(Collider other) // Используем OnTriggerEnter
@@ -254,6 +252,11 @@ public class PlayerMovement : MonoBehaviour
         if (other.CompareTag("Finish"))
         {
             LoadNextLevel(); // Вызываем метод загрузки следующего уровня
+        }
+
+         if (other.gameObject.CompareTag("Object"))
+        {
+             Destroy(other.gameObject);
         }
     }
 
