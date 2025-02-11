@@ -84,6 +84,15 @@ public class PlayerMovement : MonoBehaviour
                 DestroyShield();
             }
         }
+
+        if (swordInstance != null)
+        {
+            swordTimer += Time.deltaTime;
+            if (swordTimer >= swordActiveTime)
+            {
+                DestroySword();
+            }
+        }
     }
 
     //============================================================================
@@ -119,7 +128,7 @@ public class PlayerMovement : MonoBehaviour
         if (shieldInstance != null)
         {
             Destroy(shieldInstance);
-            shieldInstance = null;
+            shieldInstance = null; //  Добавляем это для немедленного обнуления
         }
     }
 
@@ -148,6 +157,7 @@ public class PlayerMovement : MonoBehaviour
             DestroyShield();
             swordInstance = Instantiate(swordPrefab, transform.position + transform.forward * 0.5f, transform.rotation);
             swordInstance.SetActive(true);  //  Добавляем эту строку, чтобы активировать меч!
+            swordTimer = 0f;
         }
     }
 
@@ -156,8 +166,7 @@ public class PlayerMovement : MonoBehaviour
         if (swordInstance != null)
         {
             Destroy(swordInstance);
-            swordInstance = null;
-            
+            swordInstance = null; //  Добавляем это для немедленного обнуления
         }
     }
 
