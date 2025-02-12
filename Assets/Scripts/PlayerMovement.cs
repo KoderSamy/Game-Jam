@@ -250,6 +250,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("PlayerMovement OnCollisionEnter: " + collision.gameObject.name + ", tag: " + collision.gameObject.tag);
         if (collision.gameObject.CompareTag("Bullet"))
         {
             if (shieldInstance == null) // Умираем от пули, только если щита нет
@@ -264,15 +265,27 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void Die()  //  Новый метод для перезапуска сцены
+    void Die()
     {
-        Time.timeScale = 1; // Сбрасываем Time.timeScale
+        Debug.Log("Player died.");
+        Time.timeScale = 1;
+        PlayerController playerController = FindObjectOfType<PlayerController>();
+        if (playerController != null)
+        {
+             playerController.ResetIngredients(); // Вызываем метод у найденного экземпляра
+        }
+        else
+        {
+            Debug.LogError("PlayerController not found!");
+        }
+
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("PlayerMovement OnTriggerEnter: " + other.gameObject.name + ", tag: " + other.gameObject.tag);
         // Проверка тэга объекта, с которым произошло столкновение
         if (other.CompareTag("Finish"))
         {

@@ -2,30 +2,48 @@ using UnityEngine;
 
 public class SwordController : MonoBehaviour
 {
-    public PlayerController player;  // Ссылка на PlayerController
+    public PlayerController player; //  Можно убрать эту public переменную
+
+    void Start()
+    {
+        player = FindObjectOfType<PlayerController>();
+        if (player == null)
+        {
+            Debug.LogError("PlayerController not found!");
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-         if (player == null)
-        {
-             player = FindObjectOfType<PlayerController>(); // Находим PlayerController в сцене
-             if (player == null)
-             {
-                 Debug.LogError("PlayerController not found!");
-                 return;
-             }
-         }
+        Debug.Log("Sword OnTriggerEnter entered. Collided with: " + other.gameObject.name + ", tag: " + other.gameObject.tag);
 
-
-        if (other.CompareTag(player.breadTag) || other.CompareTag(player.cheeseTag))
+        if (player == null) //  Эта проверка теперь избыточна, но можно оставить для безопасности.
         {
-            player.CollectIngredient(other.tag);
+            Debug.LogError("PlayerController not found!");
+            return;
+        }
+
+        if (other.CompareTag(player.breadTag) && player.breadCollected < player.breadNeeded)
+        {
+            Debug.Log("Collecting ingredient: " + other.tag); // other.tag
+            player.CollectIngredient(other.tag);           // other.tag
+            Destroy(other.gameObject);
+        }
+        else if (other.CompareTag(player.cheeseTag) && player.cheeseCollected < player.cheeseNeeded)
+        {
+            Debug.Log("Collecting ingredient: " + other.tag); // other.tag
+            player.CollectIngredient(other.tag);           // other.tag
+            Destroy(other.gameObject);
+        }
+        else if (player.extraIngredientsCollected < player.extraIngredientsAllowed)
+        {
+            Debug.Log("Collecting extra ingredient.");
+            player.CollectIngredient("Extra"); 
             Destroy(other.gameObject);
         }
         else
         {
-            player.CollectIngredient("Extra"); // Передаем "Extra" для лишних ингредиентов
-            Destroy(other.gameObject);
+            Debug.Log("Max ingredients or extra ingredients reached.");
         }
     }
 }

@@ -14,20 +14,34 @@ public class PlayerController : MonoBehaviour
     public GameObject winPanel;
     public GameObject losePanel;
 
-    private int breadCollected = 0;
-    private int cheeseCollected = 0;
-    private int extraIngredientsCollected = 0;
-
+    public int breadCollected = 0; //  Убираем static!
+    public int cheeseCollected = 0; //  Убираем static!
+    public int extraIngredientsCollected = 0; //  Убираем static!
 
     void Start()
     {
+        ResetIngredients(); //  Вызываем как обычный метод
         winPanel.SetActive(false);
         losePanel.SetActive(false);
         UpdateRecipeUI();
     }
 
+
+    public void ResetIngredients()  //  Убираем static!
+    {
+        breadCollected = 0;
+        cheeseCollected = 0;
+        extraIngredientsCollected = 0;
+        UpdateRecipeUI(); // Обновляем UI сразу после сброса
+    }
+
     public void CollectIngredient(string tag)
     {
+        Debug.Log("PlayerController CollectIngredient: " + tag + 
+              ", breadCollected: " + breadCollected + 
+              ", cheeseCollected: " + cheeseCollected +
+              ", extraIngredientsCollected: " + extraIngredientsCollected);
+
         if (tag == breadTag && breadCollected < breadNeeded)
         {
             breadCollected++;
@@ -44,6 +58,10 @@ public class PlayerController : MonoBehaviour
         UpdateRecipeUI();
         CheckWin();
         CheckLose();
+
+        Debug.Log("After collection: breadCollected: " + breadCollected + 
+              ", cheeseCollected: " + cheeseCollected +
+              ", extraIngredientsCollected: " + extraIngredientsCollected);
     }
 
 
@@ -56,6 +74,7 @@ public class PlayerController : MonoBehaviour
 
     void CheckWin()
     {
+        Debug.Log("Checking for win. Bread: " + breadCollected + ", Cheese: " + cheeseCollected);
         if (breadCollected == breadNeeded && cheeseCollected == cheeseNeeded)
         {
             winPanel.SetActive(true);
@@ -65,6 +84,7 @@ public class PlayerController : MonoBehaviour
 
     void CheckLose()
     {
+        Debug.Log("Checking for lose. Extra ingredients: " + extraIngredientsCollected);
         if (extraIngredientsCollected >= extraIngredientsAllowed)
         {
             losePanel.SetActive(true);
