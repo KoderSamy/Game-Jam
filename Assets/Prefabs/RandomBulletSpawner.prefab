@@ -99,9 +99,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefabs:
-  - {fileID: 50110544698264127, guid: 90c7fab7ea906e44390b4c3414804afe, type: 3}
-  - {fileID: 9068352833141794162, guid: badee731e9d57064aab8f81274b95d26, type: 3}
-  - {fileID: 8248212385366613677, guid: f19fad8931d15f54e9467e2847a1fe9b, type: 3}
-  spawnRate: 1
+  - {fileID: 128591639350332816, guid: ff821eca89106764f896c4a1ac1684f6, type: 3}
+  - {fileID: 7318122203243232049, guid: ddd45902f95eec64e9a11da477fe04c8, type: 3}
+  - {fileID: 6049568067717395113, guid: 8d0f088c28411794588da48fb4fc2e99, type: 3}
+  minSpawnRate: 0.2
+  maxSpawnRate: 0.7
   bulletSpeed: 10
   spawnPoint: {fileID: 6694102239680443271}
