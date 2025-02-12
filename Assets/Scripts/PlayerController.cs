@@ -28,17 +28,17 @@ public class PlayerController : MonoBehaviour
 
     public void CollectIngredient(string tag)
     {
-        if (tag == breadTag)
+        if (tag == breadTag && breadCollected < breadNeeded)
         {
-            breadCollected = Mathf.Min(breadCollected + 1, breadNeeded); // Не больше, чем нужно
+            breadCollected++;
         }
-        else if (tag == cheeseTag)
+        else if (tag == cheeseTag && cheeseCollected < cheeseNeeded)
         {
-            cheeseCollected = Mathf.Min(cheeseCollected + 1, cheeseNeeded); // Не больше, чем нужно
+            cheeseCollected++;
         }
         else
         {
-            extraIngredientsCollected++;
+            extraIngredientsCollected++; //  Сюда попадут все лишние ингредиенты, включая избыточный хлеб/сыр
         }
 
         UpdateRecipeUI();
