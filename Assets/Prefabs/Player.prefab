@@ -226,6 +226,17 @@ MonoBehaviour:
     m_Bits: 64
   shieldPrefab: {fileID: 6705167992804054447, guid: 450d99a757699344c99c8474655297ee, type: 3}
   maxShieldTime: 2
+  swordPrefab: {fileID: 865882834729817550, guid: d236c3dd1a1a99e4c942cc4b9ec05a62, type: 3}
+  swordActiveTime: 2
+  breadNeeded: 2
+  cheeseNeeded: 1
+  extraIngredientsAllowed: 3
+  breadTag: Bread
+  cheeseTag: Cheese
+  extraIngredientTag: ExtraIngredient
+  recipeText: {fileID: 3641546881743550506, guid: ce148c060f050854d9af4668a28b4b40, type: 3}
+  winPanel: {fileID: 1344920045987296510, guid: 23f1febfea8493d40845bf5fc4df5d30, type: 3}
+  losePanel: {fileID: 7077581662418062721, guid: 93615673028d6754a820f68413bba631, type: 3}
 --- !u!54 &3109868087384787910
 Rigidbody:
   m_ObjectHideFlags: 0

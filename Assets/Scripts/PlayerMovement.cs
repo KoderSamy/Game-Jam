@@ -1,10 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro; //  Не забудьте импортировать пространство имен TextMeshPro
 
 public class PlayerMovement : MonoBehaviour
 {
+    // ========================= ДВИЖЕНИЕ =========================
     public float speed = 5f;
     public float laneDistance = 1f;
     public float laneChangeDuration = 0.2f;
@@ -16,12 +19,14 @@ public class PlayerMovement : MonoBehaviour
     private bool isMovingToLane = false;
     private float laneChangeStartTime;
 
+    // ========================= ПРЫЖОК =========================
     public float jumpForce = 6f;
     private bool jumpEnabled = true;
     public LayerMask groundLayer; // Слой земли для проверки приземления
     private InputAction jumpAction;
     private bool isGrounded;
 
+    // ========================= ЩИТ =========================
     public GameObject shieldPrefab; // Префаб щита
     private GameObject shieldInstance; // Экземпляр щита
     private InputAction shieldAction; // Действие для щита (правая кнопка мыши)
@@ -29,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     private float shieldTimer = 0f;
     private float shieldDistance = 0.5f; // Расстояние щита по умолчанию
 
+    // ========================= МЕЧ =========================
     public GameObject swordPrefab; // Префаб меча
     private GameObject swordInstance; // Экземпляр меча
     private Level1 levelSettings;
@@ -39,6 +45,10 @@ public class PlayerMovement : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody не найден на объекте!");
+        }
         playerInput = new PlayerInput();
         moveAction = playerInput.Player.Move;
         jumpAction = playerInput.Player.Jump;
@@ -176,6 +186,8 @@ public class PlayerMovement : MonoBehaviour
     
     void Start()
     {
+        Time.timeScale = 1; //Сбрасываем Time.timeScale
+
         targetPosition = transform.position;
         rb.constraints = RigidbodyConstraints.FreezeRotation; //  Заморозить вращение, если нужно
 
@@ -186,6 +198,7 @@ public class PlayerMovement : MonoBehaviour
             shieldDistance = levelSettings.shieldDistance; // Получаем расстояние щита из LevelSlothSettings
             jumpEnabled = !levelSettings.disableJump; // Инвертируем значение, тк по умолчанию прыжок включен.
         }
+
     }
 
     void FixedUpdate()
@@ -253,19 +266,17 @@ public class PlayerMovement : MonoBehaviour
 
     void Die()  //  Новый метод для перезапуска сцены
     {
-         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Time.timeScale = 1; // Сбрасываем Time.timeScale
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    private void OnTriggerEnter(Collider other) // Используем OnTriggerEnter
+    private void OnTriggerEnter(Collider other)
     {
+        // Проверка тэга объекта, с которым произошло столкновение
         if (other.CompareTag("Finish"))
         {
-            LoadNextLevel(); // Вызываем метод загрузки следующего уровня
-        }
-
-         if (other.gameObject.CompareTag("Object"))
-        {
-             Destroy(other.gameObject);
+            LoadNextLevel();
         }
     }
 
@@ -283,4 +294,5 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Вы прошли все уровни!"); // Обработка окончания игры
         }
     }
+
 }

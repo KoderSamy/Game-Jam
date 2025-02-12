@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4711582901411316697}
   m_Layer: 10
   m_Name: red
-  m_TagString: Object
+  m_TagString: ExtraIngredient
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
